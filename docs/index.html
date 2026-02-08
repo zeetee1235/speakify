@@ -435,36 +435,49 @@ cargo build --release
             convertBtn.disabled = true;
             progressBar.classList.add('show');
             statusMessage.textContent = '변환 중... ⏳';
+            statusMessage.style.color = '#333';
             resultPreview.style.display = 'none';
             downloadBtn.classList.remove('show');
 
             try {
-                // Create FormData
-                const formData = new FormData();
-                formData.append('image', selectedFile);
-                formData.append('resolution', settings.resolution);
-                formData.append('frames', settings.frames);
+                // Read file as base64
+                const reader = new FileReader();
+                
+                reader.onload = async function(e) {
+                    const imageData = e.target.result;
+                    
+                    // Simulate processing with progress animation
+                    let progress = 0;
+                    const totalTime = settings.resolution * settings.frames / 100; // Rough estimate in ms
+                    const steps = 20;
+                    const stepTime = Math.max(100, totalTime / steps);
+                    
+                    const progressInterval = setInterval(() => {
+                        progress += 100 / steps;
+                        if (progress >= 95) {
+                            clearInterval(progressInterval);
+                        }
+                        updateProgress(progress);
+                    }, stepTime);
 
-                // Simulate progress (since we can't easily track Rust processing)
-                let progress = 0;
-                const progressInterval = setInterval(() => {
-                    progress += 2;
-                    if (progress >= 90) {
+                    // Call the conversion API
+                    try {
+                        const formData = new FormData();
+                        formData.append('image', selectedFile);
+                        formData.append('resolution', settings.resolution);
+                        formData.append('frames', settings.frames);
+
+                        // For now, use a placeholder since we need backend
+                        // This would be replaced with actual API call or WASM module
+                        await simulateConversion(progressInterval);
+                        
+                    } catch (error) {
                         clearInterval(progressInterval);
+                        throw error;
                     }
-                    updateProgress(progress);
-                }, 100);
-
-                // Call API (placeholder - needs actual implementation)
-                // For now, show message that this needs backend
-                setTimeout(() => {
-                    clearInterval(progressInterval);
-                    updateProgress(100);
-                    statusMessage.textContent = '⚠️ 웹 버전은 개발 중입니다. CLI 버전을 사용해주세요!';
-                    statusMessage.style.color = '#f59e0b';
-                    convertBtn.disabled = false;
-                    convertBtn.textContent = '다시 변환하기';
-                }, 3000);
+                };
+                
+                reader.readAsDataURL(selectedFile);
 
             } catch (error) {
                 console.error('Error:', error);
@@ -472,8 +485,38 @@ cargo build --release
                 statusMessage.style.color = '#ef4444';
                 convertBtn.disabled = false;
                 convertBtn.textContent = '다시 시도';
+                progressBar.classList.remove('show');
             }
         });
+
+        async function simulateConversion(progressInterval) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    clearInterval(progressInterval);
+                    updateProgress(100);
+                    
+                    // Show placeholder message
+                    statusMessage.innerHTML = `
+                        ⚠️ <strong>웹 버전은 개발 중입니다.</strong><br>
+                        지금은 CLI 버전을 사용해주세요!<br>
+                        <small style="opacity: 0.8;">아래 CLI 설치 방법을 참고하세요.</small>
+                    `;
+                    statusMessage.style.color = '#f59e0b';
+                    convertBtn.disabled = false;
+                    convertBtn.textContent = '다시 변환하기';
+                    
+                    // Scroll to CLI instructions
+                    setTimeout(() => {
+                        document.querySelector('.card:nth-child(3)').scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'start' 
+                        });
+                    }, 500);
+                    
+                    resolve();
+                }, 2000);
+            });
+        }
 
         function updateProgress(percent) {
             progressFill.style.width = percent + '%';

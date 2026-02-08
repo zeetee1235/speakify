@@ -1,0 +1,39 @@
+# Rust
+/target/
+**/*.rs.bk
+*.pdb
+Cargo.lock
+
+# Build artifacts
+*.o
+*.so
+*.dylib
+*.dll
+*.exe
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Output files
+*.gif
+!네르_Cuayo.gif
+!docs/네르_Cuayo.gif
+
+# Test files
+test_*
+*.png
+!assets/speakify.png
+*.jpg
+*.jpeg
+*.webp
+
+# Logs
+*.log
+
+# OS
+Thumbs.db

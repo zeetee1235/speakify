@@ -1,5 +1,6 @@
 use anyhow::Result;
 use image::RgbImage;
+#[cfg(feature = "cli")]
 use indicatif::{ProgressBar, ProgressStyle};
 use std::path::Path;
 
@@ -8,7 +9,7 @@ pub fn calculate_assignments(
     source: &RgbImage,
     target: &RgbImage,
     proximity_importance: i64,
-) -> Result<Vec<usize>> {
+) -> Vec<usize> {
     let (width, _height) = source.dimensions();
     assert_eq!(source.dimensions(), target.dimensions());
 
@@ -25,8 +26,14 @@ pub fn calculate_assignments(
     // Lower weight for better balance with proximity
     let weights = vec![2i64; source_pixels.len()];
 
-    println!("Running genetic algorithm...");
+    #[cfg(feature = "cli")]
+    {
+        println!("Running genetic algorithm...");
+    }
+    
+    #[cfg(feature = "cli")]
     let pb = ProgressBar::new(100);
+    #[cfg(feature = "cli")]
     pb.set_style(
         ProgressStyle::default_bar()
             .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos}/{len} {msg}")
@@ -101,10 +108,14 @@ pub fn calculate_assignments(
         }
 
         let progress = (1.0 - max_dist as f32 / width as f32) * 100.0;
-        pb.set_position(progress as u64);
-        pb.set_message(format!("swaps: {}", swaps_made));
+        #[cfg(feature = "cli")]
+        {
+            pb.set_position(progress as u64);
+            pb.set_message(format!("swaps: {}", swaps_made));
+        }
 
         if max_dist < 4 && swaps_made < 10 {
+            #[cfg(feature = "cli")]
             pb.finish_with_message("Complete!");
             break;
         }
@@ -117,7 +128,7 @@ pub fn calculate_assignments(
         .map(|p| p.src_y as usize * width as usize + p.src_x as usize)
         .collect();
 
-    Ok(assignments)
+    assignments
 }
 
 /// Create an animated GIF showing the morphing process
@@ -125,8 +136,8 @@ pub fn create_morphing_gif(
     source: &RgbImage,
     target: &RgbImage,
     assignments: &[usize],
-    output_path: &Path,
     num_frames: usize,
+) -> Result<Vec<u8>> {
 ) -> Result<()> {
     use gif::{Encoder, Frame, Repeat};
     use std::fs::File;
