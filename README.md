@@ -43,6 +43,17 @@ cargo build --release
 입력: PNG, JPEG, WebP  
 출력: GIF
 
+## 웹 버전
+
+GitHub Pages에서 웹 버전을 사용할 수 있습니다:  
+🌐 **[https://zeetee1235.github.io/speakify/](https://zeetee1235.github.io/speakify/)**
+
+> 참고: 현재 웹 버전은 UI만 제공되며, 실제 변환은 CLI 버전을 사용해주세요.
+
+## 기여
+
+언제나 대환영
+
 ## 크레딧
 
 이 프로젝트는 [obamify](https://github.com/Spu7Nix/obamify)에서 영감을 받았습니다.
