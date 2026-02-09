@@ -62,19 +62,6 @@
             color: var(--muted);
         }
 
-        .pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 12px;
-            border-radius: 999px;
-            border: 1px solid var(--stroke);
-            background: rgba(255, 255, 255, 0.04);
-            color: var(--muted);
-            font-size: 0.85rem;
-            margin-bottom: 14px;
-        }
-
         .card {
             background: linear-gradient(180deg, var(--card) 0%, var(--card-2) 100%);
             border-radius: 22px;
@@ -103,12 +90,6 @@
             border-color: var(--accent-2);
             background: rgba(34, 211, 238, 0.12);
             transform: scale(1.02);
-        }
-
-        .upload-icon {
-            font-size: 3.4em;
-            margin-bottom: 16px;
-            opacity: 0.85;
         }
 
         input[type="file"] {
@@ -287,25 +268,6 @@
             box-shadow: 0 12px 30px rgba(0,0,0,0.35);
         }
 
-        .cli-code {
-            background: #0c1424;
-            padding: 18px;
-            border-radius: 12px;
-            border: 1px solid var(--stroke);
-            overflow-x: auto;
-            color: var(--ink);
-        }
-
-        .cli-link {
-            color: var(--accent-2);
-            font-weight: 700;
-            text-decoration: none;
-        }
-
-        .cli-link:hover {
-            text-decoration: underline;
-        }
-
         @media (max-width: 768px) {
             h1 {
                 font-size: 2em;
@@ -327,39 +289,37 @@
 </head>
 <body>
     <header>
-        <div class="pill">WASM 기반 웹 변환</div>
         <h1>Speakify</h1>
-        <p class="subtitle">이미지를 스핔이로 변환해보세요!</p>
+        <p class="subtitle">이미지 변환</p>
     </header>
 
     <div class="container">
         <div class="card">
             <div class="upload-area" id="uploadArea">
-                <div class="upload-icon">📸</div>
-            <h2>이미지를 드래그하거나 클릭하여 업로드</h2>
-            <p style="margin-top: 10px; color: var(--muted);">PNG, JPEG, WebP 지원</p>
+                <h2>이미지 업로드</h2>
+                <p style="margin-top: 10px; color: var(--muted);">드래그 또는 클릭</p>
                 <input type="file" id="fileInput" accept="image/png,image/jpeg,image/jpg,image/webp">
             </div>
 
             <div class="quality-selector">
                 <div class="quality-btn active" data-quality="low">
-                    <div class="quality-title">⚡ 빠름</div>
+                    <div class="quality-title">빠름</div>
                     <div class="quality-desc">64×64, 50프레임</div>
-                    <div class="quality-desc">~1초</div>
+                    <div class="quality-desc">약 1초</div>
                 </div>
                 <div class="quality-btn" data-quality="mid">
-                    <div class="quality-title">⭐ 보통</div>
+                    <div class="quality-title">보통</div>
                     <div class="quality-desc">128×128, 100프레임</div>
-                    <div class="quality-desc">~5초</div>
+                    <div class="quality-desc">약 5초</div>
                 </div>
                 <div class="quality-btn" data-quality="high">
-                    <div class="quality-title">💎 최고</div>
+                    <div class="quality-title">최고</div>
                     <div class="quality-desc">256×256, 150프레임</div>
-                    <div class="quality-desc">~30초</div>
+                    <div class="quality-desc">약 30초</div>
                 </div>
             </div>
 
-            <button id="convertBtn" disabled>이미지를 선택해주세요</button>
+            <button id="convertBtn" disabled>변환 시작</button>
 
             <div class="progress-bar" id="progressBar">
                 <div class="progress-fill" id="progressFill">0%</div>
@@ -370,15 +330,15 @@
             <div class="preview-area" id="previewArea">
                 <div class="preview-container">
                     <div class="preview-box">
-                        <h3>원본 이미지</h3>
+                        <h3>원본</h3>
                         <img id="originalPreview" alt="원본">
                     </div>
                     <div class="preview-box">
-                        <h3>변환 결과</h3>
+                        <h3>결과</h3>
                         <img id="resultPreview" alt="결과">
                     </div>
                 </div>
-                <button class="download-btn" id="downloadBtn">GIF 다운로드</button>
+                <button class="download-btn" id="downloadBtn">다운로드</button>
             </div>
         </div>
 
@@ -386,22 +346,9 @@
             <h2 style="margin-bottom: 16px;">예시</h2>
             <img src="네르_Cuayo.gif" alt="변환 예시">
         </div>
-
-        <div class="card">
-            <h2 style="margin-bottom: 16px;">CLI 버전 사용하기</h2>
-            <p style="margin-bottom: 12px; color: var(--muted);">더 빠른 처리를 원하시나요? CLI 버전을 설치해보세요:</p>
-            <pre class="cli-code">git clone https://github.com/zeetee1235/speakify.git
-cd speakify
-cargo build --release
-./speakify.sh mid your_image.jpg</pre>
-            <p style="margin-top: 12px;"><a href="https://github.com/zeetee1235/speakify" target="_blank" class="cli-link">GitHub에서 보기 →</a></p>
-        </div>
     </div>
 
-    <footer>
-        <p>Inspired by <a href="https://github.com/Spu7Nix/obamify" target="_blank">obamify</a></p>
-        <p style="margin-top: 8px;">Made with Rust & WebAssembly</p>
-    </footer>
+    <footer></footer>
 
     <script>
         let selectedFile = null;
@@ -461,7 +408,7 @@ cargo build --release
 
             selectedFile = file;
             convertBtn.disabled = false;
-            convertBtn.textContent = '변환 시작 🚀';
+            convertBtn.textContent = '변환 시작';
 
             // Show preview
             const reader = new FileReader();
@@ -502,7 +449,7 @@ cargo build --release
             convertBtn.disabled = true;
             progressBar.classList.add('show');
             updateProgress(5);
-            statusMessage.textContent = '변환 중... ⏳';
+            statusMessage.textContent = '변환 중';
             statusMessage.style.color = '#333';
             resultPreview.style.display = 'none';
             downloadBtn.classList.remove('show');
@@ -523,14 +470,14 @@ cargo build --release
                 resultPreview.style.display = 'block';
                 downloadBtn.classList.add('show');
 
-                statusMessage.textContent = '✅ 변환 완료!';
+                statusMessage.textContent = '완료';
                 statusMessage.style.color = '#16a34a';
                 convertBtn.disabled = false;
-                convertBtn.textContent = '다시 변환하기';
+                convertBtn.textContent = '다시 변환';
                 updateProgress(100);
             } catch (error) {
                 console.error('Error:', error);
-                statusMessage.textContent = '❌ 변환 중 오류가 발생했습니다.';
+                statusMessage.textContent = '오류';
                 statusMessage.style.color = '#ef4444';
                 convertBtn.disabled = false;
                 convertBtn.textContent = '다시 시도';

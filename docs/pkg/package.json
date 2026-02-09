@@ -1,0 +1,15 @@
+{
+  "name": "speakify",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "speakify_bg.wasm",
+    "speakify.js",
+    "speakify.d.ts"
+  ],
+  "main": "speakify.js",
+  "types": "speakify.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
