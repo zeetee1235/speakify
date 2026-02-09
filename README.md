@@ -2,6 +2,8 @@
 
 이미지를 스핔이로 변환하는 도구
 
+사용: https://zeetee1235.github.io/speakify/
+
 ![Example](네르_Cuayo.gif)
 
 ## 빌드
@@ -10,9 +12,9 @@
 cargo build --release
 ```
 
-## 사용법
+## 사용법 (linux)
 
-### 쉘 스크립트 (권장)
+### 쉘 스크립트
 
 ```bash
 ./speakify.sh <화질> <입력이미지>
