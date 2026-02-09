@@ -15,10 +15,6 @@ struct Args {
     #[arg(short, long)]
     input: PathBuf,
 
-    /// Output GIF path
-    #[arg(short, long, default_value = "output.gif")]
-    output: PathBuf,
-
     /// Resolution (width and height will be set to this value)
     #[arg(short, long, default_value_t = 128)]
     resolution: u32,
@@ -33,23 +29,13 @@ struct Args {
 }
 
 fn main() -> Result<()> {
-    let mut args = Args::parse();
-
-    // Auto-generate output filename: (input_name)_Cuayo.gif
-    if args.output == PathBuf::from("output.gif") {
-        if let Some(stem) = args.input.file_stem() {
-            if let Some(parent) = args.input.parent() {
-                args.output = parent.join(format!("{}_Cuayo.gif", stem.to_string_lossy()));
-            } else {
-                args.output = PathBuf::from(format!("{}_Cuayo.gif", stem.to_string_lossy()));
-            }
-        }
-    }
+    let args = Args::parse();
+    let output_path = output_path_for_input(&args.input);
 
     println!("Speakify");
     println!("================================");
     println!("Input: {:?}", args.input);
-    println!("Output: {:?}", args.output);
+    println!("Output: {:?}", output_path);
     println!("Resolution: {}x{}", args.resolution, args.resolution);
     println!("Frames: {}", args.frames);
     println!();
@@ -80,21 +66,30 @@ fn main() -> Result<()> {
 
     // Calculate morphing
     println!("Calculating morphing assignments...");
-    let assignments = morph::calculate_assignments(&source_img, &target_img, args.proximity)?;
+    let assignments = morph::calculate_assignments(&source_img, &target_img, args.proximity);
 
     // Generate animation frames and create GIF
     println!("Generating {} animation frames and creating GIF...", args.frames);
-    morph::create_morphing_gif(
+    let gif_bytes = morph::create_morphing_gif(
         &source_img,
         &target_img,
         &assignments,
-        &args.output,
         args.frames,
     )?;
 
-    println!("Cuayo~ Cuayo~ Output saved to: {:?}", args.output);
+    std::fs::write(&output_path, gif_bytes)?;
+    println!("Cuayo~ Cuayo~ Output saved to: {:?}", output_path);
     
     Ok(())
+}
+
+fn output_path_for_input(input: &PathBuf) -> PathBuf {
+    let parent = input.parent().unwrap_or_else(|| std::path::Path::new("."));
+    let stem = input
+        .file_stem()
+        .and_then(|s| s.to_str())
+        .unwrap_or("output");
+    parent.join(format!("{stem}_Cuayo.gif"))
 }
 
 fn prepare_image(img: DynamicImage, size: u32) -> image::RgbImage {

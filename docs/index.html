@@ -5,6 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Speakify - 이미지를 스핔이로 변환</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Noto+Sans+KR:wght@400;600&display=swap');
+
+        :root {
+            --bg-1: #0b0f1a;
+            --bg-2: #101828;
+            --ink: #e6eefc;
+            --muted: #9fb3d9;
+            --card: #141c2c;
+            --card-2: #101827;
+            --accent: #3b82f6;
+            --accent-2: #22d3ee;
+            --warn: #f59e0b;
+            --ok: #22c55e;
+            --stroke: #24324d;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,71 +28,87 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Space Grotesk', 'Noto Sans KR', sans-serif;
+            background:
+                radial-gradient(800px 500px at 10% 10%, rgba(59, 130, 246, 0.25), transparent 60%),
+                radial-gradient(900px 600px at 90% 20%, rgba(34, 211, 238, 0.18), transparent 60%),
+                linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            color: #333;
+            color: var(--ink);
         }
 
         .container {
-            max-width: 900px;
+            max-width: 980px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 28px 20px 60px;
             flex: 1;
         }
 
         header {
             text-align: center;
-            padding: 40px 20px;
-            color: white;
+            padding: 42px 20px 26px;
         }
 
         h1 {
-            font-size: 3em;
+            font-size: clamp(2.2rem, 4vw, 3.5rem);
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: -0.02em;
         }
 
         .subtitle {
-            font-size: 1.2em;
-            opacity: 0.9;
+            font-size: 1.05rem;
+            color: var(--muted);
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid var(--stroke);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-bottom: 14px;
         }
 
         .card {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            margin: 20px 0;
+            background: linear-gradient(180deg, var(--card) 0%, var(--card-2) 100%);
+            border-radius: 22px;
+            padding: 32px;
+            border: 1px solid var(--stroke);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+            margin: 18px 0;
         }
 
         .upload-area {
-            border: 3px dashed #667eea;
-            border-radius: 15px;
-            padding: 60px 20px;
+            border: 2px dashed rgba(59, 130, 246, 0.6);
+            border-radius: 16px;
+            padding: 50px 20px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            background: #f8f9ff;
+            background: rgba(59, 130, 246, 0.08);
         }
 
         .upload-area:hover {
-            border-color: #764ba2;
-            background: #f0f1ff;
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.12);
         }
 
         .upload-area.dragover {
-            border-color: #764ba2;
-            background: #e8e9ff;
+            border-color: var(--accent-2);
+            background: rgba(34, 211, 238, 0.12);
             transform: scale(1.02);
         }
 
         .upload-icon {
-            font-size: 4em;
-            margin-bottom: 20px;
-            opacity: 0.5;
+            font-size: 3.4em;
+            margin-bottom: 16px;
+            opacity: 0.85;
         }
 
         input[type="file"] {
@@ -87,38 +119,39 @@
             display: flex;
             gap: 15px;
             justify-content: center;
-            margin: 30px 0;
+            margin: 26px 0 18px;
             flex-wrap: wrap;
         }
 
         .quality-btn {
             flex: 1;
             min-width: 150px;
-            padding: 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            background: white;
+            padding: 18px;
+            border: 1px solid var(--stroke);
+            border-radius: 14px;
+            background: rgba(255,255,255,0.02);
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
+            color: var(--ink);
         }
 
         .quality-btn:hover {
-            border-color: #667eea;
+            border-color: var(--accent);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2);
         }
 
         .quality-btn.active {
-            border-color: #667eea;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            border-color: transparent;
+            background: linear-gradient(135deg, rgba(59,130,246,0.9) 0%, rgba(34,211,238,0.9) 100%);
+            color: #0b1020;
         }
 
         .quality-title {
-            font-size: 1.3em;
-            font-weight: bold;
-            margin-bottom: 8px;
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 6px;
         }
 
         .quality-desc {
@@ -127,22 +160,22 @@
         }
 
         button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+            color: #081224;
             border: none;
             padding: 18px 40px;
-            font-size: 1.1em;
+            font-size: 1.05em;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-weight: bold;
+            font-weight: 700;
             width: 100%;
-            margin-top: 20px;
+            margin-top: 18px;
         }
 
         button:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 12px 25px rgba(59, 130, 246, 0.45);
         }
 
         button:disabled {
@@ -152,7 +185,7 @@
 
         .preview-area {
             display: none;
-            margin-top: 30px;
+            margin-top: 26px;
         }
 
         .preview-area.show {
@@ -162,7 +195,7 @@
         .preview-container {
             display: flex;
             gap: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             flex-wrap: wrap;
         }
 
@@ -173,24 +206,25 @@
         }
 
         .preview-box h3 {
-            margin-bottom: 15px;
-            color: #667eea;
+            margin-bottom: 12px;
+            color: var(--accent-2);
         }
 
         .preview-box img {
             max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.35);
         }
 
         .progress-bar {
             display: none;
             width: 100%;
-            height: 30px;
-            background: #e0e0e0;
-            border-radius: 15px;
+            height: 28px;
+            background: #0c1424;
+            border-radius: 999px;
             overflow: hidden;
-            margin: 20px 0;
+            margin: 18px 0;
+            border: 1px solid var(--stroke);
         }
 
         .progress-bar.show {
@@ -199,26 +233,27 @@
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
             transition: width 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-weight: bold;
+            color: #081224;
+            font-weight: 700;
         }
 
         .status-message {
             text-align: center;
-            margin: 15px 0;
-            font-weight: 500;
+            margin: 12px 0 6px;
+            font-weight: 600;
             min-height: 24px;
+            color: var(--muted);
         }
 
         .download-btn {
             display: none;
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            margin-top: 20px;
+            background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
+            margin-top: 12px;
         }
 
         .download-btn.show {
@@ -227,15 +262,14 @@
 
         footer {
             text-align: center;
-            padding: 30px;
-            color: white;
-            opacity: 0.9;
+            padding: 26px;
+            color: var(--muted);
         }
 
         footer a {
-            color: white;
+            color: var(--ink);
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 600;
         }
 
         footer a:hover {
@@ -244,13 +278,32 @@
 
         .example-gif {
             text-align: center;
-            margin: 30px 0;
+            margin: 26px 0;
         }
 
         .example-gif img {
-            max-width: 300px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 320px;
+            border-radius: 14px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+        }
+
+        .cli-code {
+            background: #0c1424;
+            padding: 18px;
+            border-radius: 12px;
+            border: 1px solid var(--stroke);
+            overflow-x: auto;
+            color: var(--ink);
+        }
+
+        .cli-link {
+            color: var(--accent-2);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .cli-link:hover {
+            text-decoration: underline;
         }
 
         @media (max-width: 768px) {
@@ -274,7 +327,8 @@
 </head>
 <body>
     <header>
-        <h1>🎨 Speakify</h1>
+        <div class="pill">WASM 기반 웹 변환</div>
+        <h1>Speakify</h1>
         <p class="subtitle">이미지를 스핔이로 변환해보세요!</p>
     </header>
 
@@ -282,8 +336,8 @@
         <div class="card">
             <div class="upload-area" id="uploadArea">
                 <div class="upload-icon">📸</div>
-                <h2>이미지를 드래그하거나 클릭하여 업로드</h2>
-                <p style="margin-top: 10px; opacity: 0.7;">PNG, JPEG, WebP 지원</p>
+            <h2>이미지를 드래그하거나 클릭하여 업로드</h2>
+            <p style="margin-top: 10px; color: var(--muted);">PNG, JPEG, WebP 지원</p>
                 <input type="file" id="fileInput" accept="image/png,image/jpeg,image/jpg,image/webp">
             </div>
 
@@ -329,24 +383,24 @@
         </div>
 
         <div class="card example-gif">
-            <h2 style="margin-bottom: 20px;">예시</h2>
+            <h2 style="margin-bottom: 16px;">예시</h2>
             <img src="네르_Cuayo.gif" alt="변환 예시">
         </div>
 
         <div class="card">
-            <h2 style="margin-bottom: 20px;">🚀 CLI 버전 사용하기</h2>
-            <p style="margin-bottom: 15px;">더 빠른 처리를 원하시나요? CLI 버전을 설치해보세요:</p>
-            <pre style="background: #f5f5f5; padding: 20px; border-radius: 10px; overflow-x: auto;">git clone https://github.com/zeetee1235/speakify.git
+            <h2 style="margin-bottom: 16px;">CLI 버전 사용하기</h2>
+            <p style="margin-bottom: 12px; color: var(--muted);">더 빠른 처리를 원하시나요? CLI 버전을 설치해보세요:</p>
+            <pre class="cli-code">git clone https://github.com/zeetee1235/speakify.git
 cd speakify
 cargo build --release
 ./speakify.sh mid your_image.jpg</pre>
-            <p style="margin-top: 15px;"><a href="https://github.com/zeetee1235/speakify" target="_blank" style="color: #667eea; font-weight: bold;">GitHub에서 보기 →</a></p>
+            <p style="margin-top: 12px;"><a href="https://github.com/zeetee1235/speakify" target="_blank" class="cli-link">GitHub에서 보기 →</a></p>
         </div>
     </div>
 
     <footer>
         <p>Inspired by <a href="https://github.com/Spu7Nix/obamify" target="_blank">obamify</a></p>
-        <p style="margin-top: 10px;">Made with ❤️ using Rust & WebAssembly</p>
+        <p style="margin-top: 8px;">Made with Rust & WebAssembly</p>
     </footer>
 
     <script>
@@ -420,6 +474,19 @@ cargo build --release
             reader.readAsDataURL(file);
         }
 
+        let wasmModule = null;
+        let wasmInstance = null;
+
+        async function getWasm() {
+            if (wasmInstance) return wasmInstance;
+            if (!wasmModule) {
+                wasmModule = await import('./pkg/speakify.js');
+                await wasmModule.default();
+            }
+            wasmInstance = new wasmModule.SpeakifyWasm();
+            return wasmInstance;
+        }
+
         // Convert button
         convertBtn.addEventListener('click', async () => {
             if (!selectedFile) return;
@@ -434,51 +501,33 @@ cargo build --release
 
             convertBtn.disabled = true;
             progressBar.classList.add('show');
+            updateProgress(5);
             statusMessage.textContent = '변환 중... ⏳';
             statusMessage.style.color = '#333';
             resultPreview.style.display = 'none';
             downloadBtn.classList.remove('show');
 
             try {
-                // Read file as base64
-                const reader = new FileReader();
-                
-                reader.onload = async function(e) {
-                    const imageData = e.target.result;
-                    
-                    // Simulate processing with progress animation
-                    let progress = 0;
-                    const totalTime = settings.resolution * settings.frames / 100; // Rough estimate in ms
-                    const steps = 20;
-                    const stepTime = Math.max(100, totalTime / steps);
-                    
-                    const progressInterval = setInterval(() => {
-                        progress += 100 / steps;
-                        if (progress >= 95) {
-                            clearInterval(progressInterval);
-                        }
-                        updateProgress(progress);
-                    }, stepTime);
+                const wasm = await getWasm();
+                updateProgress(15);
+                const inputBytes = new Uint8Array(await selectedFile.arrayBuffer());
 
-                    // Call the conversion API
-                    try {
-                        const formData = new FormData();
-                        formData.append('image', selectedFile);
-                        formData.append('resolution', settings.resolution);
-                        formData.append('frames', settings.frames);
+                updateProgress(30);
+                const gifBytes = wasm.convert(inputBytes, settings.resolution, settings.frames);
+                updateProgress(95);
 
-                        // For now, use a placeholder since we need backend
-                        // This would be replaced with actual API call or WASM module
-                        await simulateConversion(progressInterval);
-                        
-                    } catch (error) {
-                        clearInterval(progressInterval);
-                        throw error;
-                    }
-                };
-                
-                reader.readAsDataURL(selectedFile);
+                const blob = new Blob([gifBytes], { type: 'image/gif' });
+                const url = URL.createObjectURL(blob);
 
+                resultPreview.src = url;
+                resultPreview.style.display = 'block';
+                downloadBtn.classList.add('show');
+
+                statusMessage.textContent = '✅ 변환 완료!';
+                statusMessage.style.color = '#16a34a';
+                convertBtn.disabled = false;
+                convertBtn.textContent = '다시 변환하기';
+                updateProgress(100);
             } catch (error) {
                 console.error('Error:', error);
                 statusMessage.textContent = '❌ 변환 중 오류가 발생했습니다.';
@@ -488,35 +537,6 @@ cargo build --release
                 progressBar.classList.remove('show');
             }
         });
-
-        async function simulateConversion(progressInterval) {
-            return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    clearInterval(progressInterval);
-                    updateProgress(100);
-                    
-                    // Show placeholder message
-                    statusMessage.innerHTML = `
-                        ⚠️ <strong>웹 버전은 개발 중입니다.</strong><br>
-                        지금은 CLI 버전을 사용해주세요!<br>
-                        <small style="opacity: 0.8;">아래 CLI 설치 방법을 참고하세요.</small>
-                    `;
-                    statusMessage.style.color = '#f59e0b';
-                    convertBtn.disabled = false;
-                    convertBtn.textContent = '다시 변환하기';
-                    
-                    // Scroll to CLI instructions
-                    setTimeout(() => {
-                        document.querySelector('.card:nth-child(3)').scrollIntoView({ 
-                            behavior: 'smooth', 
-                            block: 'start' 
-                        });
-                    }, 500);
-                    
-                    resolve();
-                }, 2000);
-            });
-        }
 
         function updateProgress(percent) {
             progressFill.style.width = percent + '%';

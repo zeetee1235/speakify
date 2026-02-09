@@ -1,5 +1,5 @@
 use wasm_bindgen::prelude::*;
-use image::{DynamicImage, ImageFormat, RgbaImage};
+use image::{DynamicImage, RgbImage, GenericImageView};
 use web_sys::console;
 
 #[wasm_bindgen]
@@ -64,7 +64,7 @@ impl SpeakifyWasm {
     }
 }
 
-fn prepare_image(img: &DynamicImage, size: u32) -> RgbaImage {
+fn prepare_image(img: &DynamicImage, size: u32) -> RgbImage {
     let (width, height) = img.dimensions();
     let min_dim = width.min(height);
     
@@ -73,6 +73,6 @@ fn prepare_image(img: &DynamicImage, size: u32) -> RgbaImage {
     
     let cropped = img.crop_imm(crop_x, crop_y, min_dim, min_dim);
     let resized = cropped.resize_exact(size, size, image::imageops::FilterType::Lanczos3);
-    
-    resized.to_rgba8()
+
+    resized.to_rgb8()
 }

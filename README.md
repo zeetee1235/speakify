@@ -1,6 +1,6 @@
 # Speakify
 
-이미지를 스핔이로 변환하는 CLI 도구
+이미지를 스핔이로 변환하는 도구
 
 ![Example](네르_Cuayo.gif)
 
@@ -42,13 +42,6 @@ cargo build --release
 
 입력: PNG, JPEG, WebP  
 출력: GIF
-
-## 웹 버전
-
-GitHub Pages에서 웹 버전을 사용할 수 있습니다:  
-🌐 **[https://zeetee1235.github.io/speakify/](https://zeetee1235.github.io/speakify/)**
-
-> 참고: 현재 웹 버전은 UI만 제공되며, 실제 변환은 CLI 버전을 사용해주세요.
 
 ## 기여
 

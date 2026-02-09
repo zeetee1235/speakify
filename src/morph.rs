@@ -2,8 +2,6 @@ use anyhow::Result;
 use image::RgbImage;
 #[cfg(feature = "cli")]
 use indicatif::{ProgressBar, ProgressStyle};
-use std::path::Path;
-
 /// Calculate pixel assignments using genetic algorithm
 pub fn calculate_assignments(
     source: &RgbImage,
@@ -107,9 +105,9 @@ pub fn calculate_assignments(
             }
         }
 
-        let progress = (1.0 - max_dist as f32 / width as f32) * 100.0;
         #[cfg(feature = "cli")]
         {
+            let progress = (1.0 - max_dist as f32 / width as f32) * 100.0;
             pb.set_position(progress as u64);
             pb.set_message(format!("swaps: {}", swaps_made));
         }
@@ -134,13 +132,13 @@ pub fn calculate_assignments(
 /// Create an animated GIF showing the morphing process
 pub fn create_morphing_gif(
     source: &RgbImage,
-    target: &RgbImage,
+    _target: &RgbImage,
     assignments: &[usize],
     num_frames: usize,
 ) -> Result<Vec<u8>> {
-) -> Result<()> {
     use gif::{Encoder, Frame, Repeat};
-    use std::fs::File;
+
+    #[cfg(not(target_arch = "wasm32"))]
     use rayon::prelude::*;
 
     let (width, height) = source.dimensions();
@@ -149,8 +147,11 @@ pub fn create_morphing_gif(
         .map(|p| (p[0], p[1], p[2]))
         .collect();
 
+    #[cfg(feature = "cli")]
     println!("Generating frames in parallel...");
+    #[cfg(feature = "cli")]
     let pb = ProgressBar::new(num_frames as u64);
+    #[cfg(feature = "cli")]
     pb.set_style(
         ProgressStyle::default_bar()
             .template("[{elapsed_precise}] {bar:40.green/blue} {pos}/{len} frames")
@@ -159,25 +160,45 @@ pub fn create_morphing_gif(
     );
 
     // Generate all frames in parallel
-    let frames: Vec<Vec<u8>> = (0..num_frames)
-        .into_par_iter()
-        .map(|frame_idx| {
-            let t = frame_idx as f32 / (num_frames - 1) as f32;
-            // Apply ease-in-out for smoother animation
-            let t_smooth = ease_in_out_cubic(t);
-            generate_interpolated_frame(&source_pixels, assignments, width, height, t_smooth)
-        })
-        .inspect(|_| pb.inc(1))
-        .collect();
+    let frames: Vec<Vec<u8>> = {
+        #[cfg(not(target_arch = "wasm32"))]
+        {
+            (0..num_frames)
+                .into_par_iter()
+                .map(|frame_idx| {
+                    let t = frame_idx as f32 / (num_frames - 1) as f32;
+                    let t_smooth = ease_in_out_cubic(t);
+                    generate_interpolated_frame(&source_pixels, assignments, width, height, t_smooth)
+                })
+                .inspect(|_| {
+                    #[cfg(feature = "cli")]
+                    pb.inc(1)
+                })
+                .collect()
+        }
+        #[cfg(target_arch = "wasm32")]
+        {
+            (0..num_frames)
+                .map(|frame_idx| {
+                    let t = frame_idx as f32 / (num_frames - 1) as f32;
+                    let t_smooth = ease_in_out_cubic(t);
+                    generate_interpolated_frame(&source_pixels, assignments, width, height, t_smooth)
+                })
+                .collect()
+        }
+    };
 
+    #[cfg(feature = "cli")]
     pb.finish_with_message("Frames generated!");
 
+    #[cfg(feature = "cli")]
     println!("Writing GIF file...");
-    let mut file = File::create(output_path)?;
-    let mut encoder = Encoder::new(&mut file, width as u16, height as u16, &[])?;
+    let mut encoder = Encoder::new(vec![], width as u16, height as u16, &[])?;
     encoder.set_repeat(Repeat::Infinite)?;
 
+    #[cfg(feature = "cli")]
     let pb2 = ProgressBar::new(num_frames as u64);
+    #[cfg(feature = "cli")]
     pb2.set_style(
         ProgressStyle::default_bar()
             .template("[{elapsed_precise}] {bar:40.yellow/blue} {pos}/{len} encoding")
@@ -189,12 +210,14 @@ pub fn create_morphing_gif(
         let mut frame = Frame::from_rgb(width as u16, height as u16, &frame_data);
         frame.delay = 5; // 5 * 10ms = 50ms per frame (slower)
         encoder.write_frame(&frame)?;
+        #[cfg(feature = "cli")]
         pb2.inc(1);
     }
 
+    #[cfg(feature = "cli")]
     pb2.finish_with_message("GIF created");
 
-    Ok(())
+    Ok(encoder.into_inner()?)
 }
 
 /// Ease-in-out cubic function for smooth animation
