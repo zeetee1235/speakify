@@ -45,6 +45,10 @@ cargo build --release
 입력: PNG, JPEG, WebP  
 출력: GIF
 
+## 문제 발생 시
+
+issues 뭐가 문제인지 남겨주면 시간날때 고침
+
 ## 기여
 
 언제나 대환영
