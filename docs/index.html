@@ -421,18 +421,21 @@
             reader.readAsDataURL(file);
         }
 
-        let wasmModule = null;
-        let wasmInstance = null;
+        const worker = new Worker('./worker.js', { type: 'module' });
+        let requestId = 0;
+        const pending = new Map();
 
-        async function getWasm() {
-            if (wasmInstance) return wasmInstance;
-            if (!wasmModule) {
-                wasmModule = await import('./pkg/speakify.js');
-                await wasmModule.default();
+        worker.onmessage = (event) => {
+            const { id, ok, bytes, error } = event.data;
+            const handlers = pending.get(id);
+            if (!handlers) return;
+            pending.delete(id);
+            if (ok) {
+                handlers.resolve(bytes);
+            } else {
+                handlers.reject(new Error(error));
             }
-            wasmInstance = new wasmModule.SpeakifyWasm();
-            return wasmInstance;
-        }
+        };
 
         // Convert button
         convertBtn.addEventListener('click', async () => {
@@ -455,15 +458,22 @@
             downloadBtn.classList.remove('show');
 
             try {
-                const wasm = await getWasm();
-                updateProgress(15);
-                const inputBytes = new Uint8Array(await selectedFile.arrayBuffer());
+                updateProgress(10);
+                const inputBytes = await selectedFile.arrayBuffer();
 
-                updateProgress(30);
-                const gifBytes = wasm.convert(inputBytes, settings.resolution, settings.frames);
+                const id = ++requestId;
+                const gifPromise = new Promise((resolve, reject) => {
+                    pending.set(id, { resolve, reject });
+                });
+                worker.postMessage(
+                    { id, bytes: inputBytes, resolution: settings.resolution, frames: settings.frames },
+                    [inputBytes]
+                );
+
+                const gifBuffer = await gifPromise;
                 updateProgress(95);
 
-                const blob = new Blob([gifBytes], { type: 'image/gif' });
+                const blob = new Blob([gifBuffer], { type: 'image/gif' });
                 const url = URL.createObjectURL(blob);
 
                 resultPreview.src = url;
