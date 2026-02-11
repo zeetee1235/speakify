@@ -11,11 +11,11 @@
 
 ## 사용법
 
-# 윈도우
+### 윈도우
 
 웹 버전을 이용해주세요
 
-# linux
+### linux
 
 ```bash
 ./speakify.sh <quality> <input_image>
