@@ -39,7 +39,7 @@
 
 ## 알고리즘 
 
-분석 문서: `docs/report/report_speakify.pdf`
+분석 문서: [docs/report/report_speakify.pdf](docs/report/report_speakify.pdf)
 
 ## 크레딧
 
