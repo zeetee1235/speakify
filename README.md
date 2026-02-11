@@ -1,62 +1,47 @@
 # Speakify
 
-이미지를 스핔이로 변환하는 도구
+온세상이 스핔이다
 
-사용: https://zeetee1235.github.io/speakify/
+- 웹 버전: https://zeetee1235.github.io/speakify/
+- 입력 포맷: `PNG`, `JPEG`, `WebP`
+- 출력 포맷: `GIF`
 
 ![Example](네르_Cuayo.gif)
 
-## 빌드
+
+## 사용법
+
+# 윈도우
+
+웹 버전을 이용해주세요
+
+# linux
 
 ```bash
-cargo build --release
+./speakify.sh <quality> <input_image>
 ```
 
-## 사용법 (linux)
+품질 프리셋:
+- `low`: `64x64`, `50` frames (빠른 미리보기)
+- `mid`: `128x128`, `100` frames (균형)
+- `high`: `256x256`, `150` frames (고품질)
 
-### 쉘 스크립트
+예시:
 
 ```bash
-./speakify.sh <화질> <입력이미지>
+./speakify.sh low photo.jpg
+./speakify.sh mid image.png
+./speakify.sh high portrait.webp
 ```
 
-**화질 옵션**:
-- `low` - 64x64, 50프레임 (~1초)
-- `mid` - 128x128, 100프레임 (~5초)
-- `high` - 256x256, 150프레임 (~30초)
+출력 파일은 입력 파일과 같은 경로에 `(입력파일명)_Cuayo.gif`로 생성됩니다.
 
-**예시**:
-```bash
-./speakify.sh low photo.jpg      # 빠른 미리보기
-./speakify.sh mid image.png      # 기본 품질
-./speakify.sh high portrait.webp # 고품질
-```
 
-출력: `(입력파일명)_Cuayo.gif`
+## 알고리즘 
 
-### 직접 실행
-
-```bash
-./target/release/speakify -i <입력> -r <해상도> -f <프레임수>
-```
-
-## 지원 포맷
-
-입력: PNG, JPEG, WebP  
-출력: GIF
-
-## 문제 발생 시
-
-issues 뭐가 문제인지 남겨주면 시간날때 고침
-
-## 기여
-
-언제나 대환영
+분석 문서: `docs/report/report_speakify.pdf`
 
 ## 크레딧
 
 이 프로젝트는 [obamify](https://github.com/Spu7Nix/obamify)에서 영감을 받았습니다.
 
-## 라이선스
-
-MIT
